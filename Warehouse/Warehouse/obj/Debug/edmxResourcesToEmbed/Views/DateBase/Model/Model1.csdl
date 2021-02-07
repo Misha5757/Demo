@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="SkladModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="The_supplirer">
+    <Key>
+      <PropertyRef Name="Supplirer" />
+    </Key>
+    <Property Name="Supplirer" Type="String" MaxLength="10" FixedLength="true" Unicode="true" Nullable="false" />
+    <Property Name="FIO" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <NavigationProperty Name="warehouse" Relationship="Self.FK_warehouse_The_supplirer" FromRole="The_supplirer" ToRole="warehouse" />
+  </EntityType>
+  <EntityType Name="Titel">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" />
+    <Property Name="Product_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Brand" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Quantity" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+    <Property Name="price_per_piece" Type="Decimal" Precision="19" Scale="4" />
+    <NavigationProperty Name="warehouse" Relationship="Self.FK_warehouse_Titel" FromRole="Titel" ToRole="warehouse" />
+  </EntityType>
+  <EntityType Name="warehouse">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" />
+    <Property Name="TitleID" Type="Int32" Nullable="false" />
+    <Property Name="The_supplierID" Type="String" MaxLength="10" FixedLength="true" Unicode="true" Nullable="false" />
+    <Property Name="Delivery_date" Type="DateTime" Nullable="false" Precision="0" />
+    <Property Name="Photo" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <NavigationProperty Name="The_supplirer" Relationship="Self.FK_warehouse_The_supplirer" FromRole="warehouse" ToRole="The_supplirer" />
+    <NavigationProperty Name="Titel" Relationship="Self.FK_warehouse_Titel" FromRole="warehouse" ToRole="Titel" />
+  </EntityType>
+  <Association Name="FK_warehouse_The_supplirer">
+    <End Role="The_supplirer" Type="Self.The_supplirer" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="warehouse" Type="Self.warehouse" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="The_supplirer">
+        <PropertyRef Name="Supplirer" />
+      </Principal>
+      <Dependent Role="warehouse">
+        <PropertyRef Name="The_supplierID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_warehouse_Titel">
+    <End Role="Titel" Type="Self.Titel" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="warehouse" Type="Self.warehouse" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Titel">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="warehouse">
+        <PropertyRef Name="TitleID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="SkladEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
+    <EntitySet Name="The_supplirer" EntityType="Self.The_supplirer" />
+    <EntitySet Name="Titel" EntityType="Self.Titel" />
+    <EntitySet Name="warehouse" EntityType="Self.warehouse" />
+    <AssociationSet Name="FK_warehouse_The_supplirer" Association="Self.FK_warehouse_The_supplirer">
+      <End Role="The_supplirer" EntitySet="The_supplirer" />
+      <End Role="warehouse" EntitySet="warehouse" />
+    </AssociationSet>
+    <AssociationSet Name="FK_warehouse_Titel" Association="Self.FK_warehouse_Titel">
+      <End Role="Titel" EntitySet="Titel" />
+      <End Role="warehouse" EntitySet="warehouse" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
